@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>Data Quality Report</title>
+ <style>
+ body {
+ font-family: Arial, sans-serif;
+ margin: 24px;
+ color: #1f2937;
+ background: #f9fafb;
+ }
+ h1, h2, h3 {
+ color: #111827;
+ }
+ .section { background: white;
+ border: 1px solid #e5e7eb;
+ border-radius: 10px;
+ padding: 20px;
+ margin-bottom: 20px;
+ }
+ .grid {
+ display: grid;
+ grid-template-columns: repeat(4, 1fr);
+ gap: 12px;
+ }
+ .card {
+ background: #f3f4f6;
+ border-radius: 8px;
+ padding: 12px;
+ }
+ .label {
+ font-size: 12px;
+ color: #6b7280;
+ text-transform: uppercase;
+ margin-bottom: 4px;
+ }
+ .value {
+ font-size: 20px;
+ font-weight: bold;
+ }
+ table {
+ width: 100%;
+ border-collapse: collapse;
+ margin-top: 12px;
+ }
+ th, td {
+ border: 1px solid #e5e7eb;
+ padding: 8px;
+ text-align: left;
+ vertical-align: top;
+ }
+ th {
+ background: #f3f4f6;
+ }
+ .sev-low { color: #2563eb; font-weight: bold; }
+ .sev-medium { color: #d97706; font-weight: bold; }
+ .sev-high { color: #dc2626; font-weight: bold; }
+ .sev-critical { color: #7f1d1d; font-weight: bold; }
+ ul {
+ margin-top: 8px;
+ }
+ code {
+ background: #f3f4f6;
+ padding: 2px 6px;
+ border-radius: 4px;
+ }
+ </style>
+</head>
+<body>
+ <h1>Data Quality Report</h1>
+
+ <div class="section">
+ <h2>File Overview</h2>
+ <div class="grid">
+ <div class="card">
+ <div class="label">Filename</div>
+ <div class="value" style="font-size: 16px;">{{ result.ingestion.metadata.filename }}</div>
+ </div>
+ <div class="card">
+ <div class="label">Format</div>
+ <div class="value">{{ result.ingestion.metadata.file_format }}</div>
+ </div>
+ <div class="card">
+ <div class="label">Rows</div>
+ <div class="value">{{ format_num(result.profile.row_count) }}</div>
+ </div>
+ <div class="card">
+ <div class="label">Columns</div>
+ <div class="value">{{ format_num(result.profile.column_count) }}</div>
+ </div>
+ </div>
+ </div>
+
+ <div class="section">
+ <h2>Quality Summary</h2>
+ <div class="grid">
+ <div class="card">
+ <div class="label">Quality Score</div>
+ <div class="value">{{ result.quality.quality_score }}</div>
+ </div>
+ <div class="card">
+ <div class="label">Quality Status</div>
+ <div class="value">{{ result.quality.quality_status }}</div>
+ </div>
+ <div class="card">
+ <div class="label">Missing Cell Ratio</div>
+ <div class="value">{{ format_pct(result.profile.missing_cell_ratio) }}</div>
+ </div>
+ <div class="card">
+ <div class="label">Duplicate Row Ratio</div>
+ <div class="value">{{ format_pct(result.profile.duplicate_row_ratio) }}</div>
+ </div>
+ </div>
+ </div>
+
+ <div class="section">
+ <h2>LLM Interpretation</h2>
+ <p><strong>Summary:</strong> {{ result.llm_report.summary }}</p>
+ <p><strong>Overall Assessment:</strong> {{ result.llm_report.overall_assessment }}</p>
+
+ <h3>Top Issues</h3>
+ <ul> {% for issue in result.llm_report.top_issues %}
+ <li>{{ issue }}</li>
+ {% endfor %}
+ </ul>
+
+ <h3>Recommended Actions</h3>
+ <ul> {% for action in result.llm_report.recommended_actions %} <li>{{ action }}</li>
+ {% endfor %}
+ </ul>
+
+ <p>
+ <strong>Execution Mode:</strong> <code>{{ result.llm_execution.mode }}</code> |
+ <strong>Fallback Used:</strong> <code>{{ result.llm_execution.used_fallback }}</code> |
+ <strong>Model:</strong> <code>{{ result.llm_execution.model_name or "N/A" }}</code>
+ </p>
+ </div>
+
+ <div class="section">
+ <h2>Top Findings</h2>
+ <table>
+ <thead>
+ <tr>
+ <th>Severity</th>
+ <th>Type</th>
+ <th>Column</th>
+ <th>Title</th>
+ <th>Message</th>
+ <th>Recommendation</th>
+ </tr>
+ </thead>
+ <tbody>
+ {% for finding in result.findings %}
+ <tr>
+ <td class="sev-{{ finding.severity }}">{{ finding.severity }}</td>
+ <td>{{ finding.finding_type }}</td>
+ <td>{{ finding.column or "-" }}</td>
+ <td>{{ finding.title }}</td>
+ <td>{{ finding.message }}</td>
+ <td>{{ finding.recommendation or "-" }}</td>
+ </tr> {% endfor %} </tbody> </table>
+ </div>
+
+ <div class="section">
+ <h2>Column Type Summary</h2>
+ <table>
+ <thead>
+ <tr>
+ <th>Type</th>
+ <th>Count</th>
+ </tr>
+ </thead>
+ <tbody>
+ {% for key, value in result.profile.columns_by_type.items() %}
+ <tr>
+ <td>{{ key }}</td>
+ <td>{{ value }}</td>
+ </tr> {% endfor %}
+ </tbody>
+ </table>
+ </div>
+
+ <div class="section">
+ <h2>Column Profiles</h2>
+ <table>
+ <thead>
+ <tr>
+ <th>Column</th>
+ <th>Profile Type</th>
+ <th>Logical Type</th>
+ <th>Null Ratio</th>
+ <th>Unique Ratio</th>
+ <th>Constant</th>
+ <th>Warnings</th>
+ </tr>
+ </thead>
+ <tbody>
+ {% for cp in result.profile.column_profiles %}
+ <tr>
+ <td>{{ cp.column }}</td>
+ <td>{{ cp.profile_type }}</td>
+ <td>{{ cp.inferred_logical_type }}</td>
+ <td>{{ format_pct(cp.null_ratio) }}</td>
+ <td>{{ format_pct(cp.unique_ratio) }}</td>
+ <td>{{ cp.is_constant }}</td>
+ <td>
+ {% if cp.warnings %} <ul>
+ {% for w in cp.warnings %}
+ <li>{{ w }}</li>
+ {% endfor %}
+ </ul>
+ {% else %}
+ -
+ {% endif %}
+ </td>
+ </tr> {% endfor %} </tbody>
+ </table>
+ </div>
+
+ <div class="section">
+ <h2>Strong Correlations</h2> {% if result.profile.correlations %}
+ <table>
+ <thead>
+ <tr>
+ <th>Column A</th>
+ <th>Column B</th>
+ <th>Correlation</th>
+ <th>Absolute Correlation</th>
+ </tr>
+ </thead>
+ <tbody> {% for corr in result.profile.correlations %}
+ <tr>
+ <td>{{ corr.column_a }}</td>
+ <td>{{ corr.column_b }}</td>
+ <td>{{ format_num(corr.correlation) }}</td>
+ <td>{{ format_num(corr.abs_correlation) }}</td>
+ </tr>
+ {% endfor %}
+ </tbody>
+ </table>
+ {% else %} <p>No strong correlations above threshold were reported.</p>
+ {% endif %}
+ </div>
+
+</body>
+</html>

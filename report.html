@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>Data Quality Report</title>
+ <style>
+ body {
+ font-family: Arial, sans-serif;
+ margin: 24px;
+ color: #1f2937;
+ background: #f9fafb;
+ }
+ h1, h2, h3 {
+ color: #111827;
+ }
+ .section { background: white;
+ border: 1px solid #e5e7eb;
+ border-radius: 10px;
+ padding: 20px;
+ margin-bottom: 20px;
+ }
+ .grid {
+ display: grid;
+ grid-template-columns: repeat(4, 1fr);
+ gap: 12px;
+ }
+ .card {
+ background: #f3f4f6;
+ border-radius: 8px;
+ padding: 12px;
+ }
+ .label {
+ font-size: 12px;
+ color: #6b7280;
+ text-transform: uppercase;
+ margin-bottom: 4px;
+ }
+ .value {
+ font-size: 20px;
+ font-weight: bold;
+ }
+ table {
+ width: 100%;
+ border-collapse: collapse;
+ margin-top: 12px;
+ }
+ th, td {
+ border: 1px solid #e5e7eb;
+ padding: 8px;
+ text-align: left;
+ vertical-align: top;
+ }
+ th {
+ background: #f3f4f6;
+ }
+ .sev-low { color: #2563eb; font-weight: bold; }
+ .sev-medium { color: #d97706; font-weight: bold; }
+ .sev-high { color: #dc2626; font-weight: bold; }
+ .sev-critical { color: #7f1d1d; font-weight: bold; }
+ ul {
+ margin-top: 8px;
+ }
+ code {
+ background: #f3f4f6;
+ padding: 2px 6px;
+ border-radius: 4px;
+ }
+ </style>
+</head>
+<body>
+ <h1>Data Quality Report</h1>
+
+ <div class="section">
+ <h2>File Overview</h2>
+ <div class="grid">
+ <div class="card">
+ <div class="label">Filename</div>
+ <div class="value" style="font-size: 16px;">example_dataset.csv</div>
+ </div>
+ <div class="card">
+ <div class="label">Format</div>
+ <div class="value">csv</div>
+ </div>
+ <div class="card">
+ <div class="label">Rows</div>
+ <div class="value">100</div>
+ </div>
+ <div class="card">
+ <div class="label">Columns</div>
+ <div class="value">12</div>
+ </div>
+ </div>
+ </div>
+
+ <div class="section">
+ <h2>Quality Summary</h2>
+ <div class="grid">
+ <div class="card">
+ <div class="label">Quality Score</div>
+ <div class="value">45.0</div>
+ </div>
+ <div class="card">
+ <div class="label">Quality Status</div>
+ <div class="value">poor</div>
+ </div>
+ <div class="card">
+ <div class="label">Missing Cell Ratio</div>
+ <div class="value">0.00%</div>
+ </div>
+ <div class="card">
+ <div class="label">Duplicate Row Ratio</div>
+ <div class="value">0.00%</div>
+ </div>
+ </div>
+ </div>
+
+ <div class="section">
+ <h2>LLM Interpretation</h2>
+ <p><strong>Summary:</strong> The dataset contains 100 rows and 12 columns, with high cardinality in several categorical columns. The quality score is 45.0, indicating poor data quality.</p>
+ <p><strong>Overall Assessment:</strong> The dataset exhibits poor data quality due to high cardinality in several categorical columns, which may lead to inaccurate statistical pattern interpretation and analysis.</p>
+
+ <h3>Top Issues</h3>
+ <ul> 
+ <li>* Categorical column 'Customer Id' has high cardinality (unique ratio: 100.00%)</li>
+ 
+ <li>* Categorical column 'First Name' has high cardinality (unique ratio: 93.00%)</li>
+ 
+ <li>* Categorical column 'Last Name' has high cardinality (unique ratio: 97.00%)</li>
+ 
+ <li>* Categorical column 'Company' has high cardinality (unique ratio: 99.00%)</li>
+ 
+ </ul>
+
+ <h3>Recommended Actions</h3>
+ <ul>  <li>Standardize values in high-cardinality categorical columns</li>
+  <li>Verify business meaning of 'Customer Id' column to avoid misinterpretation</li>
+ 
+ </ul>
+
+ <p>
+ <strong>Execution Mode:</strong> <code>ollama</code> |
+ <strong>Fallback Used:</strong> <code>False</code> |
+ <strong>Model:</strong> <code>llama3.2:latest</code>
+ </p>
+ </div>
+
+ <div class="section">
+ <h2>Top Findings</h2>
+ <table>
+ <thead>
+ <tr>
+ <th>Severity</th>
+ <th>Type</th>
+ <th>Column</th>
+ <th>Title</th>
+ <th>Message</th>
+ <th>Recommendation</th>
+ </tr>
+ </thead>
+ <tbody>
+ 
+ <tr>
+ <td class="sev-medium">medium</td>
+ <td>high_cardinality_categorical</td>
+ <td>Customer Id</td>
+ <td>Categorical column has high cardinality</td>
+ <td>Column 'Customer Id' has unique ratio 100.00%.</td>
+ <td>Check whether this is actually an ID/code field or whether values should be standardized.</td>
+ </tr> 
+ <tr>
+ <td class="sev-medium">medium</td>
+ <td>high_cardinality_categorical</td>
+ <td>First Name</td>
+ <td>Categorical column has high cardinality</td>
+ <td>Column 'First Name' has unique ratio 93.00%.</td>
+ <td>Check whether this is actually an ID/code field or whether values should be standardized.</td>
+ </tr> 
+ <tr>
+ <td class="sev-medium">medium</td>
+ <td>high_cardinality_categorical</td>
+ <td>Last Name</td>
+ <td>Categorical column has high cardinality</td>
+ <td>Column 'Last Name' has unique ratio 97.00%.</td>
+ <td>Check whether this is actually an ID/code field or whether values should be standardized.</td>
+ </tr> 
+ <tr>
+ <td class="sev-medium">medium</td>
+ <td>high_cardinality_categorical</td>
+ <td>Company</td>
+ <td>Categorical column has high cardinality</td>
+ <td>Column 'Company' has unique ratio 99.00%.</td>
+ <td>Check whether this is actually an ID/code field or whether values should be standardized.</td>
+ </tr> 
+ <tr>
+ <td class="sev-medium">medium</td>
+ <td>high_cardinality_categorical</td>
+ <td>City</td>
+ <td>Categorical column has high cardinality</td>
+ <td>Column 'City' has unique ratio 100.00%.</td>
+ <td>Check whether this is actually an ID/code field or whether values should be standardized.</td>
+ </tr> 
+ <tr>
+ <td class="sev-medium">medium</td>
+ <td>high_cardinality_categorical</td>
+ <td>Phone 1</td>
+ <td>Categorical column has high cardinality</td>
+ <td>Column 'Phone 1' has unique ratio 100.00%.</td>
+ <td>Check whether this is actually an ID/code field or whether values should be standardized.</td>
+ </tr> 
+ <tr>
+ <td class="sev-medium">medium</td>
+ <td>high_cardinality_categorical</td>
+ <td>Phone 2</td>
+ <td>Categorical column has high cardinality</td>
+ <td>Column 'Phone 2' has unique ratio 100.00%.</td>
+ <td>Check whether this is actually an ID/code field or whether values should be standardized.</td>
+ </tr> 
+ <tr>
+ <td class="sev-medium">medium</td>
+ <td>high_cardinality_categorical</td>
+ <td>Email</td>
+ <td>Categorical column has high cardinality</td>
+ <td>Column 'Email' has unique ratio 100.00%.</td>
+ <td>Check whether this is actually an ID/code field or whether values should be standardized.</td>
+ </tr> 
+ <tr>
+ <td class="sev-medium">medium</td>
+ <td>high_cardinality_categorical</td>
+ <td>Website</td>
+ <td>Categorical column has high cardinality</td>
+ <td>Column 'Website' has unique ratio 100.00%.</td>
+ <td>Check whether this is actually an ID/code field or whether values should be standardized.</td>
+ </tr> 
+ <tr>
+ <td class="sev-low">low</td>
+ <td>id_like_column</td>
+ <td>Customer Id</td>
+ <td>ID-like column detected</td>
+ <td>Column 'Customer Id' appears to behave like an identifier.</td>
+ <td>Avoid using this column for statistical pattern interpretation unless it has business meaning.</td>
+ </tr> 
+ <tr>
+ <td class="sev-low">low</td>
+ <td>id_like_column</td>
+ <td>Phone 1</td>
+ <td>ID-like column detected</td>
+ <td>Column 'Phone 1' appears to behave like an identifier.</td>
+ <td>Avoid using this column for statistical pattern interpretation unless it has business meaning.</td>
+ </tr> 
+ <tr>
+ <td class="sev-low">low</td>
+ <td>id_like_column</td>
+ <td>Phone 2</td>
+ <td>ID-like column detected</td>
+ <td>Column 'Phone 2' appears to behave like an identifier.</td>
+ <td>Avoid using this column for statistical pattern interpretation unless it has business meaning.</td>
+ </tr> 
+ <tr>
+ <td class="sev-low">low</td>
+ <td>id_like_column</td>
+ <td>Email</td>
+ <td>ID-like column detected</td>
+ <td>Column 'Email' appears to behave like an identifier.</td>
+ <td>Avoid using this column for statistical pattern interpretation unless it has business meaning.</td>
+ </tr> 
+ <tr>
+ <td class="sev-low">low</td>
+ <td>id_like_column</td>
+ <td>Website</td>
+ <td>ID-like column detected</td>
+ <td>Column 'Website' appears to behave like an identifier.</td>
+ <td>Avoid using this column for statistical pattern interpretation unless it has business meaning.</td>
+ </tr>  </tbody> </table>
+ </div>
+
+ <div class="section">
+ <h2>Column Type Summary</h2>
+ <table>
+ <thead>
+ <tr>
+ <th>Type</th>
+ <th>Count</th>
+ </tr>
+ </thead>
+ <tbody>
+ 
+ <tr>
+ <td>numeric</td>
+ <td>1</td>
+ </tr> 
+ <tr>
+ <td>categorical</td>
+ <td>10</td>
+ </tr> 
+ <tr>
+ <td>datetime</td>
+ <td>1</td>
+ </tr> 
+ <tr>
+ <td>boolean</td>
+ <td>0</td>
+ </tr> 
+ <tr>
+ <td>other</td>
+ <td>0</td>
+ </tr> 
+ </tbody>
+ </table>
+ </div>
+
+ <div class="section">
+ <h2>Column Profiles</h2>
+ <table>
+ <thead>
+ <tr>
+ <th>Column</th>
+ <th>Profile Type</th>
+ <th>Logical Type</th>
+ <th>Null Ratio</th>
+ <th>Unique Ratio</th>
+ <th>Constant</th>
+ <th>Warnings</th>
+ </tr>
+ </thead>
+ <tbody>
+ 
+ <tr>
+ <td>Index</td>
+ <td>numeric</td>
+ <td>numeric</td>
+ <td>0.00%</td>
+ <td>100.00%</td>
+ <td>False</td>
+ <td>
+ 
+ -
+ 
+ </td>
+ </tr> 
+ <tr>
+ <td>Customer Id</td>
+ <td>categorical</td>
+ <td>categorical_id</td>
+ <td>0.00%</td>
+ <td>100.00%</td>
+ <td>False</td>
+ <td>
+ 
+ -
+ 
+ </td>
+ </tr> 
+ <tr>
+ <td>First Name</td>
+ <td>categorical</td>
+ <td>categorical</td>
+ <td>0.00%</td>
+ <td>93.00%</td>
+ <td>False</td>
+ <td>
+ 
+ -
+ 
+ </td>
+ </tr> 
+ <tr>
+ <td>Last Name</td>
+ <td>categorical</td>
+ <td>categorical</td>
+ <td>0.00%</td>
+ <td>97.00%</td>
+ <td>False</td>
+ <td>
+ 
+ -
+ 
+ </td>
+ </tr> 
+ <tr>
+ <td>Company</td>
+ <td>categorical</td>
+ <td>categorical</td>
+ <td>0.00%</td>
+ <td>99.00%</td>
+ <td>False</td>
+ <td>
+ 
+ -
+ 
+ </td>
+ </tr> 
+ <tr>
+ <td>City</td>
+ <td>categorical</td>
+ <td>categorical</td>
+ <td>0.00%</td>
+ <td>100.00%</td>
+ <td>False</td>
+ <td>
+ 
+ -
+ 
+ </td>
+ </tr> 
+ <tr>
+ <td>Country</td>
+ <td>categorical</td>
+ <td>categorical</td>
+ <td>0.00%</td>
+ <td>85.00%</td>
+ <td>False</td>
+ <td>
+ 
+ -
+ 
+ </td>
+ </tr> 
+ <tr>
+ <td>Phone 1</td>
+ <td>categorical</td>
+ <td>categorical_id</td>
+ <td>0.00%</td>
+ <td>100.00%</td>
+ <td>False</td>
+ <td>
+ 
+ -
+ 
+ </td>
+ </tr> 
+ <tr>
+ <td>Phone 2</td>
+ <td>categorical</td>
+ <td>categorical_id</td>
+ <td>0.00%</td>
+ <td>100.00%</td>
+ <td>False</td>
+ <td>
+ 
+ -
+ 
+ </td>
+ </tr> 
+ <tr>
+ <td>Email</td>
+ <td>categorical</td>
+ <td>categorical_id</td>
+ <td>0.00%</td>
+ <td>100.00%</td>
+ <td>False</td>
+ <td>
+ 
+ -
+ 
+ </td>
+ </tr> 
+ <tr>
+ <td>Subscription Date</td>
+ <td>datetime</td>
+ <td>datetime</td>
+ <td>0.00%</td>
+ <td>96.00%</td>
+ <td>False</td>
+ <td>
+  <ul>
+ 
+ <li>Column was inferred as datetime from string/object values.</li>
+ 
+ </ul>
+ 
+ </td>
+ </tr> 
+ <tr>
+ <td>Website</td>
+ <td>categorical</td>
+ <td>categorical_id</td>
+ <td>0.00%</td>
+ <td>100.00%</td>
+ <td>False</td>
+ <td>
+ 
+ -
+ 
+ </td>
+ </tr>  </tbody>
+ </table>
+ </div>
+
+ <div class="section">
+ <h2>Strong Correlations</h2>  <p>No strong correlations above threshold were reported.</p>
+ 
+ </div>
+
+</body>
+</html>
