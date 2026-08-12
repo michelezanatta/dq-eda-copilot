@@ -59,7 +59,7 @@ class Settings(BaseModel):
     quality_status_fair_min: float = 60.0
 
     llm_enabled: bool = True
-    llm_mode : str = "ollama" # "ollama" # ["fallback", "ollama"]
+    llm_mode : str = "fallback" # "ollama" # ["fallback", "ollama"]
     llm_base_url: str = "http://localhost:11434"
     llm_model_name: str = "llama3.2:latest"
     llm_timeout_seconds: int = 60
